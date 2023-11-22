@@ -1,0 +1,6 @@
+[project]
+dynamic = ["version"]
+name = "auto-repo"
+
+[project.scripts]
+auto-repo = "auto_repo:main_cli"
