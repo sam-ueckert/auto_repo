@@ -1,21 +1,16 @@
+#! /usr/bin/env python3
+
+import argparse
 import os
 import sys
 import subprocess
 import traceback
+from dotenv import load_dotenv
 from git import Repo
 from github import Github
-from dotenv import load_dotenv
-#onlny if you want to load the settings from a file
+
+# only if you want to load the settings from a file
 # import yaml
-
-# Get the directory and repo name from the command line argument
-repo_name = sys.argv[2]
-repo_parent_dir = sys.argv[1]
-
-load_dotenv()
-github_token = os.getenv('GITHUB_PAT')
-
-vscode_path = os.getenv('VSCODE_LOCATION')
 
 # Alternatively, load the settings from the settings file from the directory where the script is located
 # script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -43,14 +38,14 @@ def init_repo(repo_path, repo_name):
         repo = Repo.init(repo_path)
 
         # Create a new README.md file
-        print(os.path.join(repo_path, 'README.md'))
-        with open(os.path.join(repo_path, 'README.md'), 'w') as f:
-            f.write('New Project')
+        print(os.path.join(repo_path, "README.md"))
+        with open(os.path.join(repo_path, "README.md"), "w") as f:
+            f.write("New Project")
 
         # Make a local commit
-        repo.git.add('--all')
+        repo.git.add("--all")
         try:
-            repo.git.commit('-m', 'Initial commit')
+            repo.git.commit("-m", "Initial commit")
         except:
             print("No changes to commit")
         # Create a new GitHub repo
@@ -59,8 +54,8 @@ def init_repo(repo_path, repo_name):
         github_repo = user.create_repo(repo_name)
 
         # Push the local commit to the GitHub repo
-        origin = repo.create_remote('origin', github_repo.html_url)
-        origin.push(refspec='master:master')
+        origin = repo.create_remote("origin", github_repo.html_url)
+        origin.push(refspec="master:master")
         return repo_path
     except Exception as e:
         print(f"Failed to initialize repo {repo_name}: {e}")
@@ -90,8 +85,29 @@ def open_vscode(repo_path):
     subprocess.run([vscode_path, repo_path])
 
 
-repo_path = create_directory(repo_parent_dir, repo_name)
-print(repo_path)
-init_repo(repo_path, repo_name)
-create_venv(repo_path)
-open_vscode(repo_path)
+def main_cli():
+    parser = argparse.ArgumentParser(
+        prog="auto-repo",
+        description="Initializes a development environment using python "
+        "virtual environments, git, and VS Code",
+        epilog="Contribute at: https://github.com/sam-ueckert/auto_repo",
+    )
+    parser.add_argument("repository-parent-directory")
+    parser.add_argument("repository-name")
+    args = parser.parse_args()
+    repo_name = vars(args)["repository-name"]
+    repo_path = create_directory(vars(args)["repository-parent-directory"], repo_name)
+
+    load_dotenv()
+
+    github_token = os.getenv("GITHUB_PAT")
+    vscode_path = os.getenv("VSCODE_LOCATION")
+
+    print(repo_path)
+    init_repo(repo_path, repo_name)
+    create_venv(repo_path)
+    open_vscode(repo_path)
+
+
+if __name__ == "__main__":
+    main_cli()
