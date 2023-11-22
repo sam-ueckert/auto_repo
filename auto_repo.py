@@ -5,6 +5,7 @@ import os
 import sys
 import subprocess
 import traceback
+import venv
 from dotenv import load_dotenv
 from git import Repo
 from github import Github
@@ -64,13 +65,11 @@ def init_repo(repo_path, repo_name):
 
 
 # Create a virtual environment
-def create_venv(repo_path, venv=".venv"):
-    print(os.path.join(repo_path, venv))
-    try:
-        # Create a virtual environment named .venv, unless you override it with a different name
-        command = ["python", "-m", "venv", os.path.join(repo_path, venv)]
-        subprocess.run(command, check=True)
+def create_venv(repo_path, name=".venv"):
+    print(os.path.join(repo_path, name))
 
+    try:
+        venv.create(os.path.join(repo_path, name))
         # Create a .gitignore file that includes .venv
         with open(os.path.join(repo_path, ".gitignore"), "w") as f:
             f.write(".venv\n")
