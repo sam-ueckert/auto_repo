@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # Get the directory and repo name from the command line argument
 repo_name = sys.argv[2]
 repo_parent_dir = sys.argv[1]
-
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv()
 github_token = os.getenv('GITHUB_PAT')
 
@@ -36,6 +36,7 @@ def create_directory(repo_parent_dir, repo_name):
         print(traceback.format_exc())
         sys.exit(1)
     return repo_path
+    
 
 
 def init_repo(repo_path, repo_name):
