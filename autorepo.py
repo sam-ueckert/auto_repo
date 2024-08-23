@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 # Get the directory and repo name from the command line argument
 repo_name = sys.argv[2]
 repo_parent_dir = sys.argv[1]
+print(f"{repo_name} {repo_parent_dir}")
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv()
 github_token = os.getenv('GITHUB_PAT')
@@ -26,6 +27,7 @@ vscode_path = os.getenv('VSCODE_LOCATION')
 
 def create_directory(repo_parent_dir, repo_name):
     repo_path = os.path.join(repo_parent_dir, repo_name)
+    print(repo_path)
     try:
         os.mkdir(repo_path)
         return repo_path
